@@ -1,0 +1,71 @@
+{
+  "expo": {
+    "name": "NEXO",
+    "slug": "nexo",
+    "scheme": "nexo",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "androidStatusBar": {
+      "backgroundColor": "#000000",
+      "barStyle": "light-content"
+    },
+    "androidNavigationBar": {
+      "backgroundColor": "#000000",
+      "barStyle": "light-content"
+    },
+    "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "cover",
+      "backgroundColor": "#000000"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "plugins": [
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#000000",
+          "image": "./assets/splash.png",
+          "resizeMode": "cover",
+          "imageWidth": 380,
+          "dark": {
+            "backgroundColor": "#000000",
+            "image": "./assets/splash.png",
+            "resizeMode": "cover",
+            "imageWidth": 380
+          }
+        }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "usesCleartextTraffic": true
+          }
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "ios": {
+      "bundleIdentifier": "com.nexo.app"
+    },
+    "android": {
+      "package": "com.nexo.app",
+      "splash": {
+        "backgroundColor": "#000000",
+        "image": "./assets/splash.png",
+        "resizeMode": "cover"
+      },
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-foreground.png",
+        "backgroundColor": "#000000"
+      }
+    }
+  }
+}

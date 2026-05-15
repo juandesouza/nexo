@@ -1,0 +1,137 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  passenger
+  driver
+  admin
+}
+
+enum DriverStatus {
+  online
+  offline
+  busy
+}
+
+enum RideStatus {
+  requested
+  accepted
+  driver_arriving
+  in_progress
+  completed
+  canceled
+}
+
+enum DeliveryStatus {
+  requested
+  accepted
+  going_to_restaurant
+  picked_up
+  delivering
+  delivered
+}
+
+enum PaymentMethod {
+  card
+  pix
+  cash
+}
+
+enum PaymentStatus {
+  pending
+  paid
+  failed
+  refunded
+}
+
+model User {
+  id         String    @id @default(uuid())
+  name       String
+  phone      String    @unique
+  role       UserRole
+  createdAt  DateTime  @default(now())
+  driver     Driver?
+  rides      Ride[]    @relation("PassengerRides")
+  payments   Payment[]
+  ratingsBy  Rating[]  @relation("PassengerRatings")
+  ratingsFor Rating[]  @relation("DriverRatings")
+}
+
+model Driver {
+  id         String       @id @default(uuid())
+  userId     String       @unique
+  status     DriverStatus @default(offline)
+  currentLat Float?
+  currentLng Float?
+  rating     Float        @default(5)
+  vehicleId  String?
+  user       User         @relation(fields: [userId], references: [id])
+  vehicle    Vehicle?     @relation(fields: [vehicleId], references: [id])
+  rides      Ride[]
+  deliveries Delivery[]
+}
+
+model Vehicle {
+  id       String  @id @default(uuid())
+  driverId String  @unique
+  type     String
+  plate    String  @unique
+  model    String
+  driver   Driver?
+}
+
+model Ride {
+  id          String     @id @default(uuid())
+  passengerId String
+  driverId    String?
+  pickup      Json
+  dropoff     Json
+  status      RideStatus @default(requested)
+  price       Decimal    @db.Decimal(10, 2)
+  passenger   User       @relation("PassengerRides", fields: [passengerId], references: [id])
+  driver      Driver?    @relation(fields: [driverId], references: [id])
+  payment     Payment?
+  ratings     Rating[]
+}
+
+model Delivery {
+  id                 String         @id @default(uuid())
+  driverId           String?
+  restaurantLocation Json
+  customerLocation   Json
+  status             DeliveryStatus @default(requested)
+  orderId            String         @unique
+  driver             Driver?        @relation(fields: [driverId], references: [id])
+  payment            Payment?
+}
+
+model Payment {
+  id         String        @id @default(uuid())
+  userId     String
+  rideId     String?       @unique
+  deliveryId String?       @unique
+  amount     Decimal       @db.Decimal(10, 2)
+  method     PaymentMethod
+  status     PaymentStatus @default(pending)
+  user       User          @relation(fields: [userId], references: [id])
+  ride       Ride?         @relation(fields: [rideId], references: [id])
+  delivery   Delivery?     @relation(fields: [deliveryId], references: [id])
+}
+
+model Rating {
+  id          String @id @default(uuid())
+  rideId       String
+  passengerId  String
+  driverId     String
+  rating       Int
+  comment      String?
+  ride         Ride   @relation(fields: [rideId], references: [id])
+  passenger    User   @relation("PassengerRatings", fields: [passengerId], references: [id])
+  driver       User   @relation("DriverRatings", fields: [driverId], references: [id])
+}

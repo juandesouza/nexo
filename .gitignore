@@ -1,0 +1,12 @@
+node_modules
+.pnpm-store
+.turbo
+.next
+dist
+build
+.expo
+.env
+.env.local
+coverage
+*.log
+backend/prisma/migrations
