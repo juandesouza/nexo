@@ -70,20 +70,19 @@ model Driver {
   currentLat Float?
   currentLng Float?
   rating     Float        @default(5)
-  vehicleId  String?
   user       User         @relation(fields: [userId], references: [id])
-  vehicle    Vehicle?     @relation(fields: [vehicleId], references: [id])
+  vehicle    Vehicle?
   rides      Ride[]
   deliveries Delivery[]
 }
 
 model Vehicle {
-  id       String  @id @default(uuid())
-  driverId String  @unique
+  id       String @id @default(uuid())
+  driverId String @unique
   type     String
-  plate    String  @unique
+  plate    String @unique
   model    String
-  driver   Driver?
+  driver   Driver @relation(fields: [driverId], references: [id])
 }
 
 model Ride {
